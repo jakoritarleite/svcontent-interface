@@ -1,65 +1,81 @@
 <script lang="ts">
-  import logo from './assets/svelte.png'
-  import Counter from './lib/Counter.svelte'
+  import { onMount } from 'svelte';
+  import { isConnected } from '@stores/wallet';
+  import * as phantom from '@app/lib/phantom';
+  import Button from '@components/Button.svelte';
+  import ConnectWalletModal from '@components/ConnectWalletModal.svelte';
+  import Input from '@components/Input.svelte';
+  import Content from '@components/Content.svelte';
+
+  let showConnectWalletModal: boolean = false;
+
+  onMount(async () => {
+    try {
+      await phantom.checkWallet();
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  $: isConnected;
 </script>
 
 <main>
-  <img src={logo} alt="Svelte Logo" />
-  <h1>Hello Typescript!</h1>
-
-  <Counter />
-
-  <p>
-    Visit <a href="https://svelte.dev">svelte.dev</a> to learn how to build Svelte
-    apps.
-  </p>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme">SvelteKit</a> for
-    the officially supported framework, also powered by Vite!
-  </p>
+  <header>
+    <h1>SVContent</h1>
+    {#if !$isConnected}
+      <Button
+        on:click={() => (showConnectWalletModal = !showConnectWalletModal)}
+        >Connect</Button
+      >
+    {/if}
+  </header>
+  <h1 class="description">
+    View your gallery of stimulating visual content on the blockchain
+  </h1>
+  <Input />
+  <Content />
+  <ConnectWalletModal bind:show={showConnectWalletModal} />
 </main>
 
 <style>
-  :root {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-
   main {
-    text-align: center;
-    padding: 1em;
-    margin: 0 auto;
+    font-family: 'Poppins', sans-serif;
+
+    max-width: 30ch;
+    margin-inline: auto;
   }
 
-  img {
-    height: 16rem;
-    width: 16rem;
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 100px;
   }
 
-  h1 {
-    color: #ff3e00;
-    text-transform: uppercase;
-    font-size: 4rem;
-    font-weight: 100;
-    line-height: 1.1;
-    margin: 2rem auto;
-    max-width: 14rem;
+  header h1 {
+    font-size: 20px;
   }
 
-  p {
-    max-width: 14rem;
-    margin: 1rem auto;
-    line-height: 1.35;
+  .description {
+    font-size: 25px;
+    margin-inline: auto;
+
+    margin-top: 70px;
   }
 
-  @media (min-width: 480px) {
-    h1 {
-      max-width: none;
+  @media only screen and (min-width: 620px) {
+    main {
+      max-width: 60ch;
     }
 
-    p {
-      max-width: none;
+    header h1 {
+      font-size: 25px;
+    }
+
+    .description {
+      font-size: 30px;
     }
   }
 </style>
