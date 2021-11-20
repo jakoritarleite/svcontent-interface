@@ -1,17 +1,24 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { isConnected } from '@stores/wallet';
+  // import { phantonUtils } from '@stores/accounts'; 
   import * as phantom from '@app/lib/phantom';
   import Button from '@components/Button.svelte';
   import ConnectWalletModal from '@components/ConnectWalletModal.svelte';
   import Input from '@components/Input.svelte';
   import Content from '@components/Content.svelte';
 
+  // let phantomUtils: phantom.Phantom;
   let showConnectWalletModal: boolean = false;
 
   onMount(async () => {
     try {
       await phantom.checkWallet();
+
+      if ($isConnected) {
+        // phantomUtils = new phantom.Phantom();
+        // phantomUtils.getGiftList();
+      }
     } catch (err) {
       console.log(err);
     }

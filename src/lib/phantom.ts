@@ -1,25 +1,107 @@
+import { get } from 'svelte/store';
 import { walletAccount, isConnected } from '@stores/wallet';
+import { baseAccount } from '@stores/accounts';
+import { gifs } from '@stores/content';
+import { svcontentIDL, svcontentMetadata } from '@stores/program';
+import {
+  Connection,
+  PublicKey,
+  clusterApiUrl,
+  SystemProgram
+} from '@solana/web3.js';
+import { Program, Provider, web3 } from '@project-serum/anchor';
 
-export const connect = async () => {
-  try {
-    const { solana } = window;
+export class Phantom {
+  private baseAccount: web3.Keypair;
+  private programID: PublicKey;
+  private network: string;
+  private opts: any;
 
-    if (!solana) {
-      console.log(
-        "WARN the solana object isn't accessible. Please install the phantom.app extension!"
-      );
-      throw new Error('Solana object unaccessible');
-    }
+  constructor() {
+    if (!get(baseAccount)) baseAccount.set(web3.Keypair.generate());
 
-    const response = await solana.connect();
-    console.log('Connected with Public Key:', response.publicKey.toString());
+    this.baseAccount = this.createBaseAccountFromLS(get(baseAccount));
 
-    walletAccount.set(response.publicKey.toString());
-    isConnected.set(true);
-  } catch (err) {
-    console.log('Error when connecting wallet', err);
+    this.programID = new PublicKey(get(svcontentMetadata).address);
+    this.network = clusterApiUrl('devnet');
+
+    this.opts = {
+      preflightCommitment: 'processed'
+    };
   }
-};
+
+  private createProvider(): Provider {
+    const connection = new Connection(
+      this.network,
+      this.opts.preflightCommitment
+    );
+    return new Provider(
+      connection,
+      window.solana,
+      this.opts.preflightCommitment
+    );
+  }
+
+  private createBaseAccountFromLS(baseAccountDeserialized: any): web3.Keypair {
+    const arr = Object.values(baseAccountDeserialized._keypair.secretKey) as [];
+    const secret = new Uint8Array(arr);
+    return web3.Keypair.fromSecretKey(secret);
+  }
+
+  connect = async () => {
+    try {
+      const { solana } = window;
+
+      if (!solana) {
+        console.log(
+          "WARN the solana object isn't accessible. Please install the phantom.app extension!"
+        );
+        throw new Error('Solana object unaccessible');
+      }
+
+      const response = await solana.connect();
+      console.log('Connected with Public Key:', response.publicKey.toString());
+
+      // Create the account for our Program
+      const provider = this.createProvider();
+      const program = new Program(get(svcontentIDL), this.programID, provider);
+
+      await program.rpc.initialize({
+        accounts: {
+          baseAccount: this.baseAccount.publicKey,
+          user: provider.wallet.publicKey,
+          systemProgram: SystemProgram.programId
+        },
+        signers: [this.baseAccount]
+      });
+      console.log(
+        'Created a new BaseAccount w/ address:',
+        this.baseAccount.publicKey.toString()
+      );
+
+      walletAccount.set(response.publicKey.toString());
+      isConnected.set(true);
+    } catch (err) {
+      console.error('Error when connecting wallet', err);
+    }
+  };
+
+  getGiftList = async () => {
+    try {
+      const provider = this.createProvider();
+      const program = new Program(get(svcontentIDL), this.programID, provider);
+      const account = await program.account.baseAccount.fetch(
+        this.baseAccount.publicKey
+      );
+
+      console.log('Got the account', account);
+
+      gifs.set(account.gifList);
+    } catch (err) {
+      console.error('Error when getting the GIF list', err);
+    }
+  };
+}
 
 export const checkWallet = async () => {
   try {

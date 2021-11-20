@@ -35,7 +35,7 @@
         </p>
       </div>
       <div class="wallets">
-        <button class="wallet-button" on:click={phantom.connect}>
+        <button class="wallet-button" on:click={new phantom.Phantom().connect}>
           Phantom
         </button>
       </div>

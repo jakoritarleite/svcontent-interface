@@ -2,7 +2,8 @@
   import { slide } from 'svelte/transition';
   import { beforeUpdate } from 'svelte';
   import { isConnected } from '@stores/wallet';
-  //   import * as phantom from '@app/lib/phantom';
+  import { gifs } from '@stores/content';
+  import * as phantom from '@app/lib/phantom';
 
   const TEST_GIFS = [
     'https://66.media.tumblr.com/b5fd635d1a9be5c6a0c6e32530e52034/tumblr_mvsfl5mzeq1r2p77io1_500.gif',
@@ -13,8 +14,16 @@
     'https://66.media.tumblr.com/6171b03c3f37db32c1305329373174a5/tumblr_nqsq8ywIvX1rsy327o1_1280.jpg'
   ];
 
+  let phantomWeb3: phantom.Phantom = new phantom.Phantom();
+
+  if ($isConnected) {
+    phantomWeb3.getGiftList();
+  }
+
   beforeUpdate(() => {
-    // phantom.getContent();
+    if ($isConnected) {
+      phantomWeb3.getGiftList();
+    }
   });
 
   $: isConnected;
