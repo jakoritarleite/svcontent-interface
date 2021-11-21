@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import type { PublicKey } from '@solana/web3.js';
 
-type GIF = {
+export type GIF = {
   gifLink: string;
   userAddress: PublicKey;
 };

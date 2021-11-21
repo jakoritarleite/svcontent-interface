@@ -20,17 +20,20 @@
     phantomWeb3.getGiftList();
   }
 
-  beforeUpdate(() => {
-    if ($isConnected) {
-      phantomWeb3.getGiftList();
-    }
-  });
-
+  $: gifs;
+  $: console.log('gifs', $gifs);
   $: isConnected;
 </script>
 
 <div class="content">
   {#if $isConnected}
+    {#if $gifs}
+      {#each $gifs.reverse() as gif}
+        <div class="media" transition:slide>
+          <img src={gif.gifLink} alt={gif.gifLink} />
+        </div>
+      {/each}
+    {/if}
     {#each TEST_GIFS as gif}
       <div class="media" transition:slide>
         <img src={gif} alt={gif} />
