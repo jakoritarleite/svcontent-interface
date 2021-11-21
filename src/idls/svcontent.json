@@ -43,6 +43,27 @@
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "upvote",
+      "accounts": [
+        {
+          "name": "baseAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "contentToUpvote",
+          "type": "string"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -69,10 +90,30 @@
   ],
   "types": [
     {
+      "name": "Upvote",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "userAddress",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
       "name": "Item",
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "upvotes",
+            "type": {
+              "vec": {
+                "defined": "Upvote"
+              }
+            }
+          },
           {
             "name": "gifLink",
             "type": "string"
