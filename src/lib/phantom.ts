@@ -18,9 +18,7 @@ export class Phantom {
   private opts: any;
 
   constructor() {
-    if (!get(baseAccount)) baseAccount.set(web3.Keypair.generate());
-
-    this.baseAccount = this.createBaseAccountFromLS(get(baseAccount));
+    this.baseAccount = Phantom.createBaseAccountFromFile(get(baseAccount));
 
     this.programID = new PublicKey(get(svcontentMetadata).address);
     this.network = clusterApiUrl('devnet');
@@ -42,7 +40,7 @@ export class Phantom {
     );
   }
 
-  private createBaseAccountFromLS(baseAccountDeserialized: any): web3.Keypair {
+  static createBaseAccountFromFile(baseAccountDeserialized: any): web3.Keypair {
     const arr = Object.values(baseAccountDeserialized._keypair.secretKey) as [];
     const secret = new Uint8Array(arr);
     return web3.Keypair.fromSecretKey(secret);

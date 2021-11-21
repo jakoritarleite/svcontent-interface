@@ -1,10 +1,4 @@
-import { writable } from 'svelte/store';
-import type { web3 } from '@project-serum/anchor';
+import { readable } from 'svelte/store';
+import keypair from '@app/keypair.json';
 
-export const baseAccount = writable(
-  JSON.parse(localStorage.getItem('account:baseAccount'))
-);
-
-baseAccount.subscribe((account: web3.Keypair) =>
-  localStorage.setItem('account:baseAccount', JSON.stringify(account))
-);
+export const baseAccount = readable(keypair);

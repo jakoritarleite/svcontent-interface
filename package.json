@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "createkeypair": "node scripts/createKeypair.js"
   },
   "devDependencies": {
     "@rollup/plugin-inject": "^4.0.3",
