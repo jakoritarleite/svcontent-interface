@@ -116,6 +116,23 @@ export class Phantom {
       console.log('Error when saving a GIF link', err);
     }
   };
+
+  upvote = async (link: string) => {
+    try {
+      const provider = this.createProvider();
+      const program = new Program(get(svcontentIDL), this.programID, provider);
+
+      await program.rpc.upvote(link, {
+        accounts: {
+          baseAccount: this.baseAccount.publicKey,
+          user: provider.wallet.publicKey
+        }
+      });
+      console.log('Successfuly upvoted content', link);
+    } catch (err) {
+      console.error('Error when upvoting a content', err);
+    }
+  };
 }
 
 export const checkWallet = async () => {

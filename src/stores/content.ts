@@ -1,7 +1,12 @@
 import { writable } from 'svelte/store';
 import type { PublicKey } from '@solana/web3.js';
 
-export type GIF = {
+type Upvote = {
+  userAddress: PublicKey;
+};
+
+type GIF = {
+  upvotes: Array<Upvote>;
   gifLink: string;
   userAddress: PublicKey;
 };
