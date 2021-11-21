@@ -101,6 +101,23 @@ export class Phantom {
       console.error('Error when getting the GIF list', err);
     }
   };
+
+  saveGifLink = async (link: string) => {
+    try {
+      const provider = this.createProvider();
+      const program = new Program(get(svcontentIDL), this.programID, provider);
+
+      await program.rpc.addGif(link, {
+        accounts: {
+          baseAccount: this.baseAccount.publicKey,
+          user: provider.wallet.publicKey
+        }
+      });
+      console.log('GIF successfuly saved on the blockchain', link);
+    } catch (err) {
+      console.log('Error when saving a GIF link', err);
+    }
+  };
 }
 
 export const checkWallet = async () => {

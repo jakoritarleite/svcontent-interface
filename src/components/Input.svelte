@@ -6,12 +6,14 @@
 
   let value: string;
 
+  let phantomWeb3: phantom.Phantom = new phantom.Phantom();
+
   const send = async () => {
     if (value === undefined) return;
     try {
-      //   await phantom.sendContent(value);
-      //   await phantom.getContent();
-      //   value = '';
+      await phantomWeb3.saveGifLink(value);
+      await phantomWeb3.getGiftList();
+      value = '';
     } catch (err) {
       console.log(err);
     }
