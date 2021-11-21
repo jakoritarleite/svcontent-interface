@@ -21,7 +21,6 @@
   }
 
   $: gifs;
-  $: console.log('gifs', $gifs);
   $: isConnected;
 </script>
 
@@ -30,6 +29,7 @@
     {#if $gifs}
       {#each $gifs.reverse() as gif}
         <div class="media" transition:slide>
+          <p>{gif.userAddress.toString()}</p>
           <img src={gif.gifLink} alt={gif.gifLink} />
         </div>
       {/each}
@@ -48,6 +48,7 @@
   }
 
   .media {
+    position: relative;
     width: 100%;
 
     margin-top: 15px;
@@ -63,5 +64,18 @@
 
   .media img:hover {
     border-radius: 30px;
+  }
+
+  .media p {
+    background-color: #e8e6d0;
+    font-weight: bold;
+
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+
+    padding: 7.5px;
+    padding-inline: 12.5px;
+    border-radius: 20px;
   }
 </style>
