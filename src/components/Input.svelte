@@ -10,6 +10,10 @@
 
   const send = async () => {
     if (value === undefined) return;
+    if (!/(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i.test(value)) {
+      console.log("Invalid link, pls don't fuck with us! Input:", value);
+      return;
+    }
     try {
       await phantomWeb3.saveGifLink(value);
       await phantomWeb3.getGiftList();

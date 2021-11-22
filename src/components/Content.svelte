@@ -4,12 +4,16 @@
   import { gifs } from '@stores/content';
   import * as phantom from '@app/lib/phantom';
   import HeartIcon from './assets/HeartIcon.svelte';
+  import { get_all_dirty_from_scope } from 'svelte/internal';
 
   let phantomWeb3: phantom.Phantom = new phantom.Phantom();
 
   if ($isConnected) {
     phantomWeb3.getGiftList();
   }
+
+  const validateLink = (link: string): boolean =>
+    /(https?:\/\/.*\.(?:png|jpg|jpeg|gif))/i.test(link);
 
   const upvote = async (link: string) => {
     await phantomWeb3.upvote(link);
@@ -24,16 +28,18 @@
   {#if $isConnected}
     {#if $gifs}
       {#each $gifs.reverse() as gif}
-        <div class="media" transition:slide>
-          <div class="interactions">
-            <p class="sender_address">{gif.userAddress.toString()}</p>
-            <button on:click={() => upvote(gif.gifLink)} class="upvotes">
-              {gif.upvotes.length}
-              <HeartIcon style="margin-left:5px" />
-            </button>
+        {#if validateLink(gif.gifLink)}
+          <div class="media" transition:slide>
+            <div class="interactions">
+              <p class="sender_address">{gif.userAddress.toString()}</p>
+              <button on:click={() => upvote(gif.gifLink)} class="upvotes">
+                {gif.upvotes.length}
+                <HeartIcon style="margin-left:5px" />
+              </button>
+            </div>
+            <img src={gif.gifLink} alt={gif.gifLink} />
           </div>
-          <img src={gif.gifLink} alt={gif.gifLink} />
-        </div>
+        {/if}
       {/each}
     {/if}
   {/if}
